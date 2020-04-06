@@ -7,7 +7,7 @@ mkdir ${VER}
 cp -r runtime/* ${VER}
 
 # B.  Copy the new binaries into the "vim82" directory
-find ./ -name *.exe -exec cp {} ${VER}/ \;
+find ./src -name *.exe -exec cp {} ${VER}/ \;
 mkdir ${VER}/GvimExt32
 cp src/GvimExt/gvimext.dll ${VER}/GvimExt32/
 mkdir ${VER}/GvimExt64

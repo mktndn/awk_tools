@@ -1,33 +1,33 @@
-# Format Headline and URL in markdown.
+# Format Headline and host in markdown.
 #
 BEGIN {
 }
 
-{a[FNR] = $0}
+{input[FNR] = $0}
 
 END {
-    split(a[2], elements, /\//);
-    split(elements[3], host, /\./);
+    split(input[2], url, /\//);
+    split(url[3], host, /\./);
 
-    domain = "";
-    for (i=2;i<=length(host);i++){
-	domain = domain host[i] ".";
+    domain = host[2];
+    for (i=3; i<=length(host); ++i) {
+	domain = domain "." host[i];
+    }
+    adrs = 0;
+    while (("nslookup " domain |& getline aLine) == 1) {
+	# print aLine;
+	if (match(aLine, "Address") == 1) {
+	    adrs++;
+	    # print("this is address line.");
+	}
+    }
+    # print adrs;
+    if (adrs != 2) {
+	domain = url[3];
     }
 
-    # check if domain exists. (sample. "stackoverflow.com" is host name and domain
-    # name.
-    i = 0;
-    while (("nslookup " domain |& getline results ) > 0){
-	lines[i++] = results;
-    }
-    if (match(lines[length(lines)-2], /^*/)) {
-	domain = host[1] "." domain;
-    } 
-
-    domain = substr(domain, 1, length(domain)-1);
-
-    out = "[" a[1] " (";
-    out = out domain ")](" a[2] ")";
+    split(input[2], urlWithoutQuery, "\\?")
+    out = "[" input[1]" (";
+    out = out domain ")](" urlWithoutQuery[1] ")";
     print out;
 }
-
